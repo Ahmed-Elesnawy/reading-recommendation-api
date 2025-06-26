@@ -1,12 +1,13 @@
-import { BadRequestException, Body, Controller, HttpCode, HttpStatus, InternalServerErrorException, Post } from "@nestjs/common";
+import { BadRequestException, Body, ConflictException, Controller, HttpCode, HttpStatus, InternalServerErrorException, Post, UnauthorizedException } from "@nestjs/common";
 import { AuthService } from "../services/auth.service";
 import { RegisterUserDto } from "../dto/register-user.dto";
 import { ApiOperation, ApiResponse, ApiTags } from "@nestjs/swagger";
 import { UserTransformer } from "../transformers/user.transformer";
 import { plainToInstance } from "class-transformer";
 import { LoggerService } from "../../logger/logger.service";
-import { User } from "@prisma/client";
 import { LoginDto } from "../dto/login.dto";
+import { LoginResponseDto, RegisterResponseDto } from "../dto/auth-response.dto";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -25,27 +26,36 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'User registered successfully',
-    type: UserTransformer,
+    type: RegisterResponseDto
+  })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'User already exists',
     schema: {
       properties: {
         message: {
           type: 'string',
-          example: 'User registered successfully'
+          example: 'User already exists'
         },
-        user: {
-          $ref: '#/components/schemas/UserTransformer'
+        error: {
+          type: 'string',
+          example: 'Conflict'
+        },
+        statusCode: {
+          type: 'number',
+          example: 409
         }
       }
     }
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Invalid input or user already exists',
+    description: 'Invalid input data',
     schema: {
       properties: {
         message: {
           type: 'string',
-          example: 'User already exists'
+          example: 'Invalid input data'
         },
         error: {
           type: 'string',
@@ -65,7 +75,7 @@ export class AuthController {
       properties: {
         message: {
           type: 'string',
-          example: 'Failed to register user'
+          example: 'Internal server error occurred'
         },
         error: {
           type: 'string',
@@ -80,29 +90,33 @@ export class AuthController {
   })
   async register(
     @Body() registerUserDto: RegisterUserDto
-  ): Promise<{
-    message: string;
-    user: UserTransformer;
-  }> {
-    const userExists = await this.authService.checkIfUserExists(registerUserDto.email);
+  ): Promise<RegisterResponseDto> {
+    try {      
+      const userExists = await this.authService.checkIfUserExists(registerUserDto.email);
 
-    if (userExists) {
-      throw new BadRequestException('User already exists');
-    }
+      if (userExists) {
+        throw new ConflictException('User already exists');
+      }
 
-    let user: User;
-
-    try {
-      user = await this.authService.register(registerUserDto);
+      const user = await this.authService.register(registerUserDto);
+            
+      return {
+        message: 'User registered successfully',
+        user: plainToInstance(UserTransformer, user),
+      };
     } catch (error) {
-      this.logger.error('AuthController', 'Error registering user', error);
-      throw new InternalServerErrorException('Failed to register user');
+      if (error instanceof ConflictException) {
+        throw error;
+      }
+      
+      if (error instanceof PrismaClientKnownRequestError) {
+        this.logger.error('AuthController', `Database error during registration: ${error.code}`, error.message);
+        throw new BadRequestException('Invalid input data');
+      }
+
+      this.logger.error('AuthController', 'Error registering user', error instanceof Error ? error.message : 'Unknown error');
+      throw new InternalServerErrorException('Internal server error occurred');
     }
-    
-    return {
-      message: 'User registered successfully',
-      user: plainToInstance(UserTransformer, user),
-    };
   }
 
   @Post('login')
@@ -114,21 +128,7 @@ export class AuthController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'User logged in successfully',
-    schema: {
-      properties: {
-        message: {
-          type: 'string',
-          example: 'User logged in successfully'
-        },
-        access_token: {
-          type: 'string',
-          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
-        },
-        user: {
-          $ref: '#/components/schemas/UserTransformer'
-        }
-      }
-    }
+    type: LoginResponseDto
   })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
@@ -151,13 +151,33 @@ export class AuthController {
     }
   })
   @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid input data',
+    schema: {
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Invalid input data'
+        },
+        error: {
+          type: 'string',
+          example: 'Bad Request'
+        },
+        statusCode: {
+          type: 'number',
+          example: 400
+        }
+      }
+    }
+  })
+  @ApiResponse({
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     description: 'Server error occurred during login',
     schema: {
       properties: {
         message: {
           type: 'string',
-          example: 'Failed to login user'
+          example: 'Internal server error occurred'
         },
         error: {
           type: 'string',
@@ -170,22 +190,32 @@ export class AuthController {
       }
     }
   })
-  async login(@Body() loginUserDto: LoginDto): Promise<{
-    message: string;
-    access_token: string;
-    user: UserTransformer;
-  }> {
+  async login(@Body() loginDto: LoginDto): Promise<LoginResponseDto> {
     try {
-      this.logger.log('AuthController', 'Logging in user', loginUserDto);
-      const { access_token, user } = await this.authService.login(loginUserDto);
+      this.logger.log('AuthController', `Login attempt for email: ${loginDto.email}`);
+      
+      const { access_token, user } = await this.authService.login(loginDto);
+      
+      this.logger.log('AuthController', `User logged in successfully: ${user.email}`);
+      
       return {
         message: 'User logged in successfully',
         access_token,
         user: plainToInstance(UserTransformer, user),
       };
     } catch (error) {
-      this.logger.error('AuthController', 'Error logging in user', error);
-      throw new InternalServerErrorException('Failed to login user');
+      if (error instanceof UnauthorizedException) {
+        this.logger.warn('AuthController', `Failed login attempt for email: ${loginDto.email}`);
+        throw error;
+      }
+
+      if (error instanceof PrismaClientKnownRequestError) {
+        this.logger.error('AuthController', `Database error during login: ${error.code}`, error.message);
+        throw new BadRequestException('Invalid input data');
+      }
+
+      this.logger.error('AuthController', 'Error during login', error instanceof Error ? error.message : 'Unknown error');
+      throw new InternalServerErrorException('Internal server error occurred');
     }
   }
 }
