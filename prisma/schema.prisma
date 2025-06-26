@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserType {
+  ADMIN
+  USER
+}
+
+model User {
+  id         Int               @id @default(autoincrement())
+  email      String           @unique
+  name       String?
+  type       UserType @default(USER)
+  intervals  ReadingInterval[]
+
+  @@index([email])
+  @@map("users")
+}
+
+model Book {
+  id           Int               @id @default(autoincrement())
+  title        String
+  numberOfPages  Int             @default(0) @map("number_of_pages")
+  numberOfReadPages Int          @default(0) @map("number_of_read_pages")
+  intervals    ReadingInterval[]
+
+  @@map("books")
+}
+
+model ReadingInterval {
+  id        Int      @id @default(autoincrement())
+  startPage Int      @map("start_page")
+  endPage   Int      @map("end_page")
+  bookId    Int      @map("book_id")
+  userId    Int      @map("user_id")
+  book      Book     @relation(fields: [bookId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("reading_intervals")
+} 
