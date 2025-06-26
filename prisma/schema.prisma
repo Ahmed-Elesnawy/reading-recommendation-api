@@ -15,11 +15,17 @@ enum UserType {
   USER
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   id         Int               @id @default(autoincrement())
   email      String           @unique
   name       String?
-  type       UserType @default(USER)
+  password   String
+  role       Role             @default(USER)
   intervals  ReadingInterval[]
 
   @@index([email])
