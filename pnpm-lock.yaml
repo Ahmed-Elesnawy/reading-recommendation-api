@@ -11,6 +11,9 @@ importers:
       '@nestjs/common':
         specifier: ^9.0.0
         version: 9.4.3(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      '@nestjs/config':
+        specifier: 2.3.4
+        version: 2.3.4(@nestjs/common@9.4.3(reflect-metadata@0.1.14)(rxjs@7.8.2))(reflect-metadata@0.1.14)(rxjs@7.8.2)
       '@nestjs/core':
         specifier: ^9.0.0
         version: 9.4.3(@nestjs/common@9.4.3(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@9.4.3)(reflect-metadata@0.1.14)(rxjs@7.8.2)
@@ -440,6 +443,13 @@ packages:
         optional: true
       class-validator:
         optional: true
+
+  '@nestjs/config@2.3.4':
+    resolution: {integrity: sha512-IGdSF+0F9MJO6dCRTEahdxPz4iVijjtolcFBxnY+2QYM3bXYQvAgzskGZi+WkAFJN/VzR3TEp60gN5sI74GxPA==}
+    peerDependencies:
+      '@nestjs/common': ^7.0.0 || ^8.0.0 || ^9.0.0
+      reflect-metadata: ^0.1.13
+      rxjs: ^6.0.0 || ^7.2.0
 
   '@nestjs/core@9.4.3':
     resolution: {integrity: sha512-Qi63+wi55Jh4sDyaj5Hhx2jOpKqT386aeo+VOKsxnd+Ql9VvkO/FjmuwBGUyzkJt29ENYc+P0Sx/k5LtstNpPQ==}
@@ -1174,6 +1184,14 @@ packages:
   doctrine@3.0.0:
     resolution: {integrity: sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==}
     engines: {node: '>=6.0.0'}
+
+  dotenv-expand@10.0.0:
+    resolution: {integrity: sha512-GopVGCpVS1UKH75VKHGuQFqS1Gusej0z4FyQkPdwjil2gNIv+LNsqBlboOzpJFZKVT95GkCyWJbBSdFEFUWI2A==}
+    engines: {node: '>=12'}
+
+  dotenv@16.1.4:
+    resolution: {integrity: sha512-m55RtE8AsPeJBpOIFKihEmqUcoVncQIwo7x9U8ZwLEZw9ZpXboz2c+rvog+jUaJvVrZ5kBOeYQBX5+8Aa/OZQw==}
+    engines: {node: '>=12'}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -2661,6 +2679,10 @@ packages:
     resolution: {integrity: sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA==}
     engines: {node: '>= 0.4.0'}
 
+  uuid@9.0.0:
+    resolution: {integrity: sha512-MXcSTerfPa4uqyzStbRoTgt5XIe3x5+42+q1sDuy3R5MDk66URdLMOZe5aPX/SQd+kuYAh0FdP/pO28IkQyTeg==}
+    hasBin: true
+
   v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
 
@@ -3266,6 +3288,16 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.5.3
       uid: 2.0.2
+
+  '@nestjs/config@2.3.4(@nestjs/common@9.4.3(reflect-metadata@0.1.14)(rxjs@7.8.2))(reflect-metadata@0.1.14)(rxjs@7.8.2)':
+    dependencies:
+      '@nestjs/common': 9.4.3(reflect-metadata@0.1.14)(rxjs@7.8.2)
+      dotenv: 16.1.4
+      dotenv-expand: 10.0.0
+      lodash: 4.17.21
+      reflect-metadata: 0.1.14
+      rxjs: 7.8.2
+      uuid: 9.0.0
 
   '@nestjs/core@9.4.3(@nestjs/common@9.4.3(reflect-metadata@0.1.14)(rxjs@7.8.2))(@nestjs/platform-express@9.4.3)(reflect-metadata@0.1.14)(rxjs@7.8.2)':
     dependencies:
@@ -4106,6 +4138,10 @@ snapshots:
   doctrine@3.0.0:
     dependencies:
       esutils: 2.0.3
+
+  dotenv-expand@10.0.0: {}
+
+  dotenv@16.1.4: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -5807,6 +5843,8 @@ snapshots:
   util-deprecate@1.0.2: {}
 
   utils-merge@1.0.1: {}
+
+  uuid@9.0.0: {}
 
   v8-compile-cache-lib@3.0.1: {}
 
