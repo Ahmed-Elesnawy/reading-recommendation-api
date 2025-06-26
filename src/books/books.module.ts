@@ -5,12 +5,14 @@ import { BullModule } from "@nestjs/bullmq";
 import { BOOKS_CALCULATE_READING_INTERVAL_QUEUE } from "./constants";
 import { BookReadingIntervalsController } from "./controllers/book-reading-intervals.controller";
 import { LoggerModule } from "src/logger/logger.module";
+import { CalculateReadPagesConsumer } from "./queue-consumers/calculate-read-pages.consumer";
+import { CalculateReadPagesService } from "./services";
 
 @Module({
   imports: [PrismaModule, BullModule.registerQueue({
     name: BOOKS_CALCULATE_READING_INTERVAL_QUEUE,
   }), LoggerModule],
-  providers: [ReadingIntervalService],
+  providers: [ReadingIntervalService,CalculateReadPagesConsumer,CalculateReadPagesService],
   controllers: [BookReadingIntervalsController],
   exports: [ReadingIntervalService],
 })
