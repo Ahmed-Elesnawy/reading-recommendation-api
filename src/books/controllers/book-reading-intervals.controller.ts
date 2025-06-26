@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from "@nestjs/common";
 import { ReadingIntervalService } from "../services/reading-interval.service";
 import { CreateBookIntervalsDto } from "../dto";
 import { CurrentUser } from "src/auth/decorators/current-user.decorator";
@@ -26,9 +26,22 @@ export class BookReadingIntervalsController {
     @Body() createBookIntervalsDto: CreateBookIntervalsDto, 
     @CurrentUser() user: User
   ): Promise<ReadingIntervalResponseDto> {
+
+    const allIntervalsForSameBook = this.readingIntervalService.allIntervalsForSameBook(createBookIntervalsDto);
+
+    if (!allIntervalsForSameBook) {
+      throw new BadRequestException("All intervals must be for the same book");
+    }
+
+    const bookShouldBeExisted = await this.readingIntervalService.bookShouldBeExisted(createBookIntervalsDto);
+
+    if (!bookShouldBeExisted) {
+      throw new BadRequestException("Book not found");
+    }
+
     const readingIntervals = await this.readingIntervalService.createReadingInterval(
       user.id, 
-      createBookIntervalsDto.intervals
+      createBookIntervalsDto
     );
 
     return {
