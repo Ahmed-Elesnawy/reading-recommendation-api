@@ -16,11 +16,14 @@ RUN pnpm install
 # Copy the rest of the application
 COPY . .
 
+# Generate Prisma client
+RUN pnpm prisma generate
+
 # Build the application
 RUN pnpm run build
 
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Start the application in watch mode
-CMD ["pnpm", "run", "start:dev"] 
+# Start the application with prisma migrate
+CMD pnpm prisma migrate deploy && pnpm run start:dev 

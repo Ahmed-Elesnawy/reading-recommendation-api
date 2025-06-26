@@ -19,11 +19,15 @@ services:
       - DATABASE_USER=postgres
       - DATABASE_PASSWORD=postgres
       - DATABASE_NAME=reading_recommendation
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/reading_recommendation?schema=public
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      - postgres
-      - redis
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
 
   postgres:
     container_name: reading-recommendation-postgres
@@ -41,6 +45,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
   redis:
     container_name: reading-recommendation-redis
@@ -55,6 +60,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
 volumes:
   postgres_data:
