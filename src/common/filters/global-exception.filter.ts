@@ -22,24 +22,26 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
     const { status, message, details } = this.getErrorDetails(exception);
 
-    // Log the error with context
-    this.loggerService.error(
-      'GlobalExceptionFilter',
-      `${request.method} ${request.url} - ${message}`,
-      exception instanceof Error ? exception.stack : undefined,
-      {
-        userId: (request as any).user?.id || 'anonymous',
-        method: request.method,
-        url: request.url,
-        userAgent: request.get('User-Agent'),
-        ip: request.ip,
-        body: request.body,
-        query: request.query,
-        params: request.params,
-        statusCode: status,
-        details,
-      },
-    );
+    // Only log internal server errors
+    if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+      this.loggerService.error(
+        'GlobalExceptionFilter',
+        `${request.method} ${request.url} - ${message}`,
+        exception instanceof Error ? exception.stack : undefined,
+        {
+          userId: (request as any).user?.id || 'anonymous',
+          method: request.method,
+          url: request.url,
+          userAgent: request.get('User-Agent'),
+          ip: request.ip,
+          body: request.body,
+          query: request.query,
+          params: request.params,
+          statusCode: status,
+          details,
+        },
+      );
+    }
 
     // Send error response
     const errorResponse = {
@@ -157,4 +159,4 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         };
     }
   }
-} 
+}
