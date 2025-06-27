@@ -25,7 +25,7 @@ export class TopBooksController {
         try {
             const topBooks = await this.topBooksService.getTopBooks();
             return {
-                books: topBooks.map(book => plainToInstance(BookTransformer, book))
+                books: topBooks.map(book => BookTransformer.fromBook(book))
             }
         } catch (error) {
             this.logger.error(TopBooksController.name, error, error.message);

@@ -1,5 +1,6 @@
 import { UserType } from "@prisma/client";
 import { ApiProperty } from "@nestjs/swagger";
+import { Exclude } from "class-transformer";
 
 export class UserTransformer {
     @ApiProperty({
@@ -26,4 +27,12 @@ export class UserTransformer {
         example: UserType.USER
     })
     type: UserType;
+
+    @ApiProperty({
+        description: 'The password of the user',
+        example: 'password'
+    })
+    
+    @Exclude()
+    password: string;
 }
