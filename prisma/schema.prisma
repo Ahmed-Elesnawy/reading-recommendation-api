@@ -33,7 +33,10 @@ model Book {
   numberOfPages  Int             @default(0) @map("number_of_pages")
   numberOfReadPages Int          @default(0) @map("number_of_read_pages")
   intervals    ReadingInterval[]
+  createdAt    DateTime        @default(now()) @map("created_at")
+  updatedAt    DateTime        @updatedAt @map("updated_at")
 
+  @@index([numberOfReadPages(sort: Desc)])
   @@map("books")
 }
 
@@ -46,5 +49,6 @@ model ReadingInterval {
   book      Book     @relation(fields: [bookId], references: [id])
   user      User     @relation(fields: [userId], references: [id])
 
+  @@index([bookId])
   @@map("reading_intervals")
 } 

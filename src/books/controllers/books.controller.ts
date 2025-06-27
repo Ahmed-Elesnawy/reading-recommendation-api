@@ -27,7 +27,7 @@ export class BooksController {
       const createdBook = await this.createBookService.createBook(book);
       return {
         message: 'Book created successfully',
-        book: plainToInstance(BookTransformer, createdBook)
+        book: BookTransformer.fromBook(createdBook)
       };
     } catch (error) {
       this.logger.error(BooksController.name, error, error.message);
