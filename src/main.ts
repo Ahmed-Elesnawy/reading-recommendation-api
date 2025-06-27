@@ -3,6 +3,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
+import * as csurf from 'csurf';
+import * as cookieParser from 'cookie-parser';
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -29,6 +32,15 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('api-docs', app, document);
+
+
+  // No need with jwt auth
+  // app.use(cookieParser())
+  // app.use(csurf({ cookie: true }));
+
+  app.enableCors({
+    origin: '*', // TODO: change to the frontend url
+  });
 
   const configService = app.get(ConfigService);
   const port = configService.get('PORT') || 3000;
