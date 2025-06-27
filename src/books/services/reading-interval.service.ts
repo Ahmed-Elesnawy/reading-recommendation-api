@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { InjectQueue } from "@nestjs/bullmq";
 import { BOOKS_CALCULATE_READING_INTERVAL_QUEUE } from "../constants";
@@ -15,6 +15,8 @@ export class ReadingIntervalService {
   ) { }
 
   async createReadingInterval(userId: number, createBookIntervalsDto: CreateBookIntervalsDto): Promise<void> {
+    // Validate all business rules before proceeding
+    await this.validateReadingIntervals(createBookIntervalsDto);
 
     const readingIntervals = await this.prisma.readingInterval.createMany({
       data: createBookIntervalsDto.intervals.map((interval) => ({
@@ -29,47 +31,54 @@ export class ReadingIntervalService {
     const shouldRecalculate: boolean = readingIntervals.count > 0;
 
     // Because its for the same book
-    const bookId: number = createBookIntervalsDto.intervals[0].bookId;
-
     if (shouldRecalculate) {
+      const bookId = createBookIntervalsDto.intervals[0].bookId;
       await this.addToCalculateQueue(bookId);
     }
-
   }
 
-  public allIntervalsForSameBook(createBookIntervalsDto: CreateBookIntervalsDto) : boolean {
-    const { intervals } = createBookIntervalsDto;
+  /**
+   * Validates all business rules for reading intervals
+   * @throws BadRequestException if any validation fails
+   */
+  private async validateReadingIntervals(createBookIntervalsDto: CreateBookIntervalsDto): Promise<void> {
+    if (!this.allIntervalsForSameBook(createBookIntervalsDto)) {
+      throw new BadRequestException("All intervals must be for the same book");
+    }
 
-    const allBooksForSameBook : boolean = createBookIntervalsDto.intervals.every((interval) => interval.bookId === intervals[0].bookId);
+    const book = await this.findBookFromIntervals(createBookIntervalsDto);
+    if (!book) {
+      throw new BadRequestException("Book not found");
+    }
 
-    return allBooksForSameBook;
+    if (!this.intervalsEndPageShouldBeSmallerThanBookPages(book, createBookIntervalsDto)) {
+      throw new BadRequestException("Intervals end pages should be smaller than book pages");
+    }
   }
 
-  public async findBookFromIntervals(createBookIntervalsDto: CreateBookIntervalsDto) : Promise<Book> {
+  private allIntervalsForSameBook(createBookIntervalsDto: CreateBookIntervalsDto): boolean {
     const { intervals } = createBookIntervalsDto;
+    return intervals.every((interval) => interval.bookId === intervals[0].bookId);
+  }
 
+  private async findBookFromIntervals(createBookIntervalsDto: CreateBookIntervalsDto): Promise<Book> {
+    const { intervals } = createBookIntervalsDto;
     const bookId = intervals[0].bookId;
 
     if (!bookId) {
-      return null
+      return null;
     }
     
-    const book = await this.prisma.book.findUnique({
+    return await this.prisma.book.findUnique({
       where: {
         id: bookId,
       },
     });
-
-    return book;
   }
 
-
-  public intervalsEndPageShouldBeSmallerThanBookPages(book: Book,createBookIntervalsDto: CreateBookIntervalsDto) : boolean {
+  private intervalsEndPageShouldBeSmallerThanBookPages(book: Book, createBookIntervalsDto: CreateBookIntervalsDto): boolean {
     const { intervals } = createBookIntervalsDto;
-
-    const allIntervalsEndPageShouldBeSmallerThanBookPages : boolean = intervals.every((interval) => interval.endPage <= book.numberOfPages);
-
-    return allIntervalsEndPageShouldBeSmallerThanBookPages;
+    return intervals.every((interval) => interval.endPage <= book.numberOfPages);
   }
 
   private async addToCalculateQueue(bookId: number) {

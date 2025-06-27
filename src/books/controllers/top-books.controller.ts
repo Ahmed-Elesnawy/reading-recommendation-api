@@ -5,6 +5,10 @@ import { Book, UserType } from "@prisma/client";
 import { JwtAuthGuard } from "src/auth/guards/jwt-auth.guard";
 import { RolesGuard } from "src/auth/guards/roles.guard";
 import { Roles } from "src/auth/decorators/roles.decorator";
+import { TopBooksResponseDto } from "../dto/responses/top-books-response.dto";
+import { plainToInstance } from "class-transformer";
+import { BookTransformer } from "../transformers/book.transformer";
+import { TopBooksSwagger } from "../decorators/swagger/top-books.swagger";
 
 @Controller('books')
 export class TopBooksController {
@@ -16,10 +20,13 @@ export class TopBooksController {
     @Get('top')
     @UseGuards(JwtAuthGuard,RolesGuard)
     @Roles(UserType.USER)
-    async getTopBooks() : Promise<Book[]> {
+    @TopBooksSwagger()
+    async getTopBooks() : Promise<TopBooksResponseDto> {
         try {
             const topBooks = await this.topBooksService.getTopBooks();
-            return topBooks
+            return {
+                books: topBooks.map(book => plainToInstance(BookTransformer, book))
+            }
         } catch (error) {
             this.logger.error(TopBooksController.name, error, error.message);
             throw new BadRequestException("Error getting top books");
