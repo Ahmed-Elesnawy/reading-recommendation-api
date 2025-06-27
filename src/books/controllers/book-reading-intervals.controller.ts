@@ -10,7 +10,6 @@ import { Roles } from "src/auth/decorators/roles.decorator";
 import { ReadingIntervalResponseDto } from "../dto/responses/reading-interval-response.dto";
 import { CreateReadingIntervalsSwagger } from "../decorators/swagger/reading-intervals.swagger";
 import { LoggerService } from "src/logger/logger.service";
-import { Book } from "@prisma/client";
 
 @ApiTags('Books')
 @Controller('books')
@@ -29,33 +28,15 @@ export class BookReadingIntervalsController {
     @Body() createBookIntervalsDto: CreateBookIntervalsDto, 
     @CurrentUser() user: User
   ): Promise<ReadingIntervalResponseDto> {
-
-    const allIntervalsForSameBook = this.readingIntervalService.allIntervalsForSameBook(createBookIntervalsDto);
-
-    if (!allIntervalsForSameBook) {
-      throw new BadRequestException("All intervals must be for the same book");
-    }
-
-    const book : Book | null = await this.readingIntervalService.findBookFromIntervals(createBookIntervalsDto);
-
-    if (!book) {
-      throw new BadRequestException("Book not found");
-    }
-
-    const intervalsEndPageShouldBeSmallerThanBookPages = this.readingIntervalService.intervalsEndPageShouldBeSmallerThanBookPages(book,createBookIntervalsDto);
-
-    if (!intervalsEndPageShouldBeSmallerThanBookPages) {
-      throw new BadRequestException("Intervals end pages should be smaller than book pages");
-    }
-  
     try {
       await this.readingIntervalService.createReadingInterval(
         user.id, 
         createBookIntervalsDto
       );
+      
     } catch (error) {
       this.logger.error(BookReadingIntervalsController.name, error, error.message);
-      throw new BadRequestException("Error creating reading intervals");
+      throw error instanceof BadRequestException ? error : new BadRequestException("Error creating reading intervals");
     }
 
     return {
