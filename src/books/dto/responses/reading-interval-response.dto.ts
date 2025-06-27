@@ -7,20 +7,6 @@ export class ReadingIntervalResponseDto {
     enum: ['success', 'error']
   })
   status: string;
-
-  @ApiProperty({
-    description: 'Number of reading intervals created',
-    example: 2,
-    minimum: 0
-  })
-  readingIntervals: number;
-
-  @ApiProperty({
-    description: 'Optional message providing additional information',
-    example: 'Successfully created reading intervals',
-    required: false
-  })
-  message?: string;
 }
 
 export class ReadingIntervalErrorResponseDto {

@@ -9,12 +9,14 @@ import { RolesGuard } from "src/auth/guards/roles.guard";
 import { Roles } from "src/auth/decorators/roles.decorator";
 import { ReadingIntervalResponseDto } from "../dto/responses/reading-interval-response.dto";
 import { CreateReadingIntervalsSwagger } from "../decorators/swagger/reading-intervals.swagger";
+import { LoggerService } from "src/logger/logger.service";
 
 @ApiTags('Books')
 @Controller('books')
 export class BookReadingIntervalsController {
   constructor(
-    private readonly readingIntervalService: ReadingIntervalService
+    private readonly readingIntervalService: ReadingIntervalService,
+    private readonly logger: LoggerService
   ) {}
 
   @Post('reading-intervals')
@@ -38,16 +40,19 @@ export class BookReadingIntervalsController {
     if (!bookShouldBeExisted) {
       throw new BadRequestException("Book not found");
     }
-
-    const readingIntervals = await this.readingIntervalService.createReadingInterval(
-      user.id, 
-      createBookIntervalsDto
-    );
+  
+    try {
+      await this.readingIntervalService.createReadingInterval(
+        user.id, 
+        createBookIntervalsDto
+      );
+    } catch (error) {
+      this.logger.error(BookReadingIntervalsController.name, error, error.message);
+      throw new BadRequestException("Error creating reading intervals");
+    }
 
     return {
       status: "success",
-      readingIntervals,
-      message: `Successfully created ${readingIntervals} reading intervals`
     };
   }
 }

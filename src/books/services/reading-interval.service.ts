@@ -13,7 +13,7 @@ export class ReadingIntervalService {
     private readonly calculateReadingIntervalQueue: Queue
   ) { }
 
-  async createReadingInterval(userId: number, createBookIntervalsDto: CreateBookIntervalsDto): Promise<number> {
+  async createReadingInterval(userId: number, createBookIntervalsDto: CreateBookIntervalsDto): Promise<void> {
 
     const readingIntervals = await this.prisma.readingInterval.createMany({
       data: createBookIntervalsDto.intervals.map((interval) => ({
@@ -34,7 +34,6 @@ export class ReadingIntervalService {
       await this.addToCalculateQueue(bookId);
     }
 
-    return readingIntervals.count;
   }
 
   public allIntervalsForSameBook(createBookIntervalsDto: CreateBookIntervalsDto) : boolean {
