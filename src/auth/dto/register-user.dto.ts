@@ -1,12 +1,18 @@
-import { UserType } from "@prisma/client";
-import { IsEmail, IsEnum, IsNotEmpty, IsString, IsStrongPassword } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { UserType } from '@prisma/client';
+import {
+  IsEmail,
+  IsEnum,
+  IsNotEmpty,
+  IsString,
+  IsStrongPassword,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class RegisterUserDto {
   @ApiProperty({
     description: 'The email address of the user',
     example: 'user@example.com',
-    format: 'email'
+    format: 'email',
   })
   @IsEmail()
   @IsNotEmpty()
@@ -16,7 +22,7 @@ export class RegisterUserDto {
     description: 'The password for the user account',
     example: 'StrongP@ssw0rd123',
     minLength: 8,
-    format: 'password'
+    format: 'password',
   })
   @IsString()
   @IsNotEmpty()
@@ -25,7 +31,7 @@ export class RegisterUserDto {
 
   @ApiProperty({
     description: 'The full name of the user',
-    example: 'John Doe'
+    example: 'John Doe',
   })
   @IsString()
   @IsNotEmpty()
@@ -34,7 +40,7 @@ export class RegisterUserDto {
   @ApiProperty({
     description: 'The type of user account',
     enum: UserType,
-    example: UserType.USER
+    example: UserType.USER,
   })
   @IsEnum(UserType)
   type: UserType;
