@@ -4,6 +4,7 @@ import { InjectQueue } from "@nestjs/bullmq";
 import { BOOKS_CALCULATE_READING_INTERVAL_QUEUE } from "../constants";
 import { Queue } from "bullmq";
 import { CreateBookIntervalsDto } from "../dto";
+import { Book } from "@prisma/client";
 
 @Injectable()
 export class ReadingIntervalService {
@@ -44,13 +45,13 @@ export class ReadingIntervalService {
     return allBooksForSameBook;
   }
 
-  public async bookShouldBeExisted(createBookIntervalsDto: CreateBookIntervalsDto) : Promise<boolean> {
+  public async findBookFromIntervals(createBookIntervalsDto: CreateBookIntervalsDto) : Promise<Book> {
     const { intervals } = createBookIntervalsDto;
 
     const bookId = intervals[0].bookId;
 
     if (!bookId) {
-      return false;
+      return null
     }
     
     const book = await this.prisma.book.findUnique({
@@ -59,7 +60,16 @@ export class ReadingIntervalService {
       },
     });
 
-    return book !== null;
+    return book;
+  }
+
+
+  public intervalsEndPageShouldBeSmallerThanBookPages(book: Book,createBookIntervalsDto: CreateBookIntervalsDto) : boolean {
+    const { intervals } = createBookIntervalsDto;
+
+    const allIntervalsEndPageShouldBeSmallerThanBookPages : boolean = intervals.every((interval) => interval.endPage <= book.numberOfPages);
+
+    return allIntervalsEndPageShouldBeSmallerThanBookPages;
   }
 
   private async addToCalculateQueue(bookId: number) {
