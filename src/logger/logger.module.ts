@@ -15,10 +15,13 @@ import { LoggerService } from './logger.service';
             format: winston.format.combine(
               winston.format.timestamp(),
               winston.format.ms(),
-              nestWinstonModuleUtilities.format.nestLike('Reading-Recommendation-API', {
-                colors: true,
-                prettyPrint: true,
-              }),
+              nestWinstonModuleUtilities.format.nestLike(
+                'Reading-Recommendation-API',
+                {
+                  colors: true,
+                  prettyPrint: true,
+                },
+              ),
             ),
           }),
           // File Transport for errors
@@ -55,4 +58,4 @@ import { LoggerService } from './logger.service';
   providers: [LoggerService],
   exports: [LoggerService],
 })
-export class LoggerModule {} 
+export class LoggerModule {}

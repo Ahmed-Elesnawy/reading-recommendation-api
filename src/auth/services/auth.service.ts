@@ -1,9 +1,13 @@
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
-import { Prisma, User } from "@prisma/client";
-import { RegisterUserDto } from "../dto/register-user.dto";
-import { LoginDto } from "../dto/login.dto";
-import { JwtService } from "@nestjs/jwt";
-import { PrismaService } from "../../prisma/prisma.service";
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Prisma, User } from '@prisma/client';
+import { RegisterUserDto } from '../dto/register-user.dto';
+import { LoginDto } from '../dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../../prisma/prisma.service';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -15,35 +19,40 @@ export class AuthService {
 
   async checkIfUserExists(email: string): Promise<boolean> {
     const existingUser = await this.prisma.user.findUnique({
-      where: { email }
+      where: { email },
     });
 
     return existingUser ? true : false;
   }
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {
-    const salt: number = 10;
-    
+    const salt = 10;
+
     const user = await this.prisma.user.create({
       data: {
         ...registerUserDto,
         password: await bcrypt.hash(registerUserDto.password, salt),
-      }
+      },
     });
 
     return user;
   }
 
-  async login(loginDto: LoginDto): Promise<{ access_token: string, user: User }> {
+  async login(
+    loginDto: LoginDto,
+  ): Promise<{ access_token: string; user: User }> {
     const user = await this.prisma.user.findUnique({
-      where: { email: loginDto.email }
+      where: { email: loginDto.email },
     });
 
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
@@ -53,7 +62,7 @@ export class AuthService {
 
     return {
       access_token: await this.jwtService.signAsync(payload),
-      user
+      user,
     };
   }
 }

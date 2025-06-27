@@ -6,7 +6,10 @@ import { ConfigService } from '@nestjs/config';
 export class PrismaService extends PrismaClient implements OnModuleInit {
   constructor(private configService: ConfigService) {
     super({
-      log: configService.get('NODE_ENV') === 'development' ? ['query', 'error', 'warn'] : ['error'],
+      log:
+        configService.get('NODE_ENV') === 'development'
+          ? ['query', 'error', 'warn']
+          : ['error'],
     });
   }
 

@@ -6,12 +6,12 @@ export const LoginSwagger = () => {
   return applyDecorators(
     ApiOperation({
       summary: 'Login user',
-      description: 'Authenticates user credentials and returns access token'
+      description: 'Authenticates user credentials and returns access token',
     }),
     ApiResponse({
       status: HttpStatus.OK,
       description: 'User logged in successfully',
-      type: LoginResponseDto
+      type: LoginResponseDto,
     }),
     ApiResponse({
       status: HttpStatus.UNAUTHORIZED,
@@ -20,18 +20,18 @@ export const LoginSwagger = () => {
         properties: {
           message: {
             type: 'string',
-            example: 'Invalid credentials'
+            example: 'Invalid credentials',
           },
           error: {
             type: 'string',
-            example: 'Unauthorized'
+            example: 'Unauthorized',
           },
           statusCode: {
             type: 'number',
-            example: 401
-          }
-        }
-      }
+            example: 401,
+          },
+        },
+      },
     }),
     ApiResponse({
       status: HttpStatus.BAD_REQUEST,
@@ -40,18 +40,18 @@ export const LoginSwagger = () => {
         properties: {
           message: {
             type: 'string',
-            example: 'Invalid input data'
+            example: 'Invalid input data',
           },
           error: {
             type: 'string',
-            example: 'Bad Request'
+            example: 'Bad Request',
           },
           statusCode: {
             type: 'number',
-            example: 400
-          }
-        }
-      }
+            example: 400,
+          },
+        },
+      },
     }),
     ApiResponse({
       status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -60,18 +60,18 @@ export const LoginSwagger = () => {
         properties: {
           message: {
             type: 'string',
-            example: 'Internal server error occurred'
+            example: 'Internal server error occurred',
           },
           error: {
             type: 'string',
-            example: 'Internal Server Error'
+            example: 'Internal Server Error',
           },
           statusCode: {
             type: 'number',
-            example: 500
-          }
-        }
-      }
-    })
+            example: 500,
+          },
+        },
+      },
+    }),
   );
-}; 
+};

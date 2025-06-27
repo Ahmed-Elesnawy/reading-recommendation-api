@@ -1,12 +1,16 @@
 import { applyDecorators, HttpStatus } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { ReadingIntervalResponseDto, ReadingIntervalErrorResponseDto } from '../../dto/responses/reading-interval-response.dto';
+import {
+  ReadingIntervalResponseDto,
+  ReadingIntervalErrorResponseDto,
+} from '../../dto/responses/reading-interval-response.dto';
 
 export const CreateReadingIntervalsSwagger = () => {
   return applyDecorators(
     ApiOperation({
       summary: 'Create reading intervals',
-      description: 'Create multiple reading intervals for books. This will track user\'s reading progress. All intervals must be for the same book and the end pages must be within the book\'s total pages.'
+      description:
+        "Create multiple reading intervals for books. This will track user's reading progress. All intervals must be for the same book and the end pages must be within the book's total pages.",
     }),
     ApiBearerAuth(),
     ApiResponse({
@@ -16,10 +20,10 @@ export const CreateReadingIntervalsSwagger = () => {
       content: {
         'application/json': {
           example: {
-            status: 'success'
-          }
-        }
-      }
+            status: 'success',
+          },
+        },
+      },
     }),
     ApiResponse({
       status: HttpStatus.BAD_REQUEST,
@@ -32,33 +36,34 @@ export const CreateReadingIntervalsSwagger = () => {
               value: {
                 message: 'Book not found',
                 error: 'Bad Request',
-                statusCode: 400
-              }
+                statusCode: 400,
+              },
             },
             'Invalid Intervals': {
               value: {
                 message: 'All intervals must be for the same book',
                 error: 'Bad Request',
-                statusCode: 400
-              }
+                statusCode: 400,
+              },
             },
             'Invalid Pages': {
               value: {
-                message: 'Intervals end pages should be smaller than book pages',
+                message:
+                  'Intervals end pages should be smaller than book pages',
                 error: 'Bad Request',
-                statusCode: 400
-              }
+                statusCode: 400,
+              },
             },
             'General Error': {
               value: {
                 message: 'Error creating reading intervals',
                 error: 'Bad Request',
-                statusCode: 400
-              }
-            }
-          }
-        }
-      }
+                statusCode: 400,
+              },
+            },
+          },
+        },
+      },
     }),
     ApiResponse({
       status: HttpStatus.UNAUTHORIZED,
@@ -69,10 +74,10 @@ export const CreateReadingIntervalsSwagger = () => {
           example: {
             message: 'Unauthorized',
             error: 'Unauthorized',
-            statusCode: 401
-          }
-        }
-      }
+            statusCode: 401,
+          },
+        },
+      },
     }),
     ApiResponse({
       status: HttpStatus.FORBIDDEN,
@@ -83,10 +88,10 @@ export const CreateReadingIntervalsSwagger = () => {
           example: {
             message: 'Forbidden resource',
             error: 'Forbidden',
-            statusCode: 403
-          }
-        }
-      }
-    })
+            statusCode: 403,
+          },
+        },
+      },
+    }),
   );
-}; 
+};

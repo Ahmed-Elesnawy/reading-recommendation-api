@@ -4,7 +4,7 @@ export class ReadingIntervalResponseDto {
   @ApiProperty({
     description: 'Status of the operation',
     example: 'success',
-    enum: ['success', 'error']
+    enum: ['success', 'error'],
   })
   status: string;
 }
@@ -12,19 +12,19 @@ export class ReadingIntervalResponseDto {
 export class ReadingIntervalErrorResponseDto {
   @ApiProperty({
     description: 'Error message',
-    example: 'Invalid page numbers provided'
+    example: 'Invalid page numbers provided',
   })
   message: string;
 
   @ApiProperty({
     description: 'Error type',
-    example: 'Bad Request'
+    example: 'Bad Request',
   })
   error: string;
 
   @ApiProperty({
     description: 'HTTP status code',
-    example: 400
+    example: 400,
   })
   statusCode: number;
-} 
+}

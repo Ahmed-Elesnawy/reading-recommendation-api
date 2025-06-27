@@ -1,10 +1,10 @@
-import { IsInt, IsNotEmpty, IsString, Min } from "class-validator";
-import { ApiProperty } from "@nestjs/swagger";
+import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateBookDto {
   @ApiProperty({
     description: 'The title of the book',
-    example: 'The Great Gatsby'
+    example: 'The Great Gatsby',
   })
   @IsString()
   @IsNotEmpty()
@@ -13,7 +13,7 @@ export class CreateBookDto {
   @ApiProperty({
     description: 'The total number of pages in the book',
     example: 180,
-    minimum: 1
+    minimum: 1,
   })
   @IsInt()
   @IsNotEmpty()

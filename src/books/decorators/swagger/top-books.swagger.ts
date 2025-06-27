@@ -7,12 +7,12 @@ export const TopBooksSwagger = () => {
     ApiBearerAuth(),
     ApiOperation({
       summary: 'Get top rated books',
-      description: 'Retrieves a list of top rated books (User access required)'
+      description: 'Retrieves a list of top rated books (User access required)',
     }),
     ApiResponse({
       status: HttpStatus.OK,
       description: 'Successfully retrieved top books',
-      type: TopBooksResponseDto
+      type: TopBooksResponseDto,
     }),
     ApiResponse({
       status: HttpStatus.BAD_REQUEST,
@@ -21,18 +21,18 @@ export const TopBooksSwagger = () => {
         properties: {
           message: {
             type: 'string',
-            example: 'Error getting top books'
+            example: 'Error getting top books',
           },
           error: {
             type: 'string',
-            example: 'Bad Request'
+            example: 'Bad Request',
           },
           statusCode: {
             type: 'number',
-            example: 400
-          }
-        }
-      }
+            example: 400,
+          },
+        },
+      },
     }),
     ApiResponse({
       status: HttpStatus.UNAUTHORIZED,
@@ -41,14 +41,14 @@ export const TopBooksSwagger = () => {
         properties: {
           message: {
             type: 'string',
-            example: 'Unauthorized'
+            example: 'Unauthorized',
           },
           statusCode: {
             type: 'number',
-            example: 401
-          }
-        }
-      }
+            example: 401,
+          },
+        },
+      },
     }),
     ApiResponse({
       status: HttpStatus.FORBIDDEN,
@@ -57,14 +57,14 @@ export const TopBooksSwagger = () => {
         properties: {
           message: {
             type: 'string',
-            example: 'Forbidden resource'
+            example: 'Forbidden resource',
           },
           statusCode: {
             type: 'number',
-            example: 403
-          }
-        }
-      }
-    })
+            example: 403,
+          },
+        },
+      },
+    }),
   );
 };

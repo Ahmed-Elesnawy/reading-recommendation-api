@@ -30,7 +30,7 @@ export class LoggerService {
   }
 
   // Method to log HTTP requests
-  logHttpRequest(req: any, context: string = 'HTTP') {
+  logHttpRequest(req: any, context = 'HTTP') {
     this.logger.info('Incoming Request', {
       context,
       method: req.method,
@@ -42,7 +42,7 @@ export class LoggerService {
   }
 
   // Method to log HTTP responses
-  logHttpResponse(res: any, context: string = 'HTTP') {
+  logHttpResponse(res: any, context = 'HTTP') {
     this.logger.info('Outgoing Response', {
       context,
       statusCode: res.statusCode,
@@ -51,7 +51,7 @@ export class LoggerService {
   }
 
   // Method to log errors with stack traces
-  logError(error: Error, context: string = 'Application') {
+  logError(error: Error, context = 'Application') {
     this.logger.error('Error occurred', {
       context,
       error: {
@@ -63,7 +63,7 @@ export class LoggerService {
   }
 
   // Method to log performance metrics
-  logPerformance(operation: string, timeInMs: number, context: string = 'Performance') {
+  logPerformance(operation: string, timeInMs: number, context = 'Performance') {
     this.logger.info('Performance metric', {
       context,
       operation,
@@ -71,4 +71,4 @@ export class LoggerService {
       timestamp: new Date().toISOString(),
     });
   }
-} 
+}
