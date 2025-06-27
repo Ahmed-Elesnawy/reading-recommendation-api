@@ -1,12 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { Logger } from '@nestjs/common';
 import { CalculateReadPagesService } from '../calculate-read-pages.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 describe('CalculateReadPagesService', () => {
   let service: CalculateReadPagesService;
   let prismaService: PrismaService;
-  let logger: Logger;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -28,10 +26,6 @@ describe('CalculateReadPagesService', () => {
 
     service = module.get<CalculateReadPagesService>(CalculateReadPagesService);
     prismaService = module.get<PrismaService>(PrismaService);
-    logger = service['logger'];
-    
-    // Mock logger methods
-    jest.spyOn(logger, 'error').mockImplementation();
   });
 
   it('should be defined', () => {
@@ -153,18 +147,13 @@ describe('CalculateReadPagesService', () => {
       });
     });
 
-    it('should handle error during calculation and log it', async () => {
+    it('should handle error during calculation and re-throw it', async () => {
       const bookId = 1;
       const error = new Error('Database error');
       
       (prismaService.readingInterval.findMany as jest.Mock).mockRejectedValue(error);
 
       await expect(service.calculate(bookId)).rejects.toThrow('Database error');
-      
-      expect(logger.error).toHaveBeenCalledWith(
-        `Error calculating read pages for book ${bookId}: ${error.message}`,
-        error.stack,
-      );
     });
   });
 

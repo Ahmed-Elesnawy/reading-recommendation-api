@@ -3,12 +3,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class CalculateReadPagesService {
-  private readonly logger = new Logger(CalculateReadPagesService.name);
 
   constructor(private readonly prisma: PrismaService) {}
 
   async calculate(bookId: number): Promise<void> {
-    try {
       const intervals = await this.getReadingIntervals(bookId);
 
       if (!intervals.length) {
@@ -21,9 +19,6 @@ export class CalculateReadPagesService {
         this.calculateTotalUniquePages(mergedIntervals);
 
       await this.updateBookReadPages(bookId, totalPagesRead);
-    } catch (error) {
-      this.handleError(error, bookId);
-    }
   }
 
   private async getReadingIntervals(
@@ -83,13 +78,5 @@ export class CalculateReadPagesService {
       where: { id: bookId },
       data: { numberOfReadPages: totalPagesRead },
     });
-  }
-
-  private handleError(error: Error, bookId: number): void {
-    this.logger.error(
-      `Error calculating read pages for book ${bookId}: ${error.message}`,
-      error.stack,
-    );
-    throw error;
   }
 }
