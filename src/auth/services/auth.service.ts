@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+  ConflictException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -26,6 +26,12 @@ export class AuthService {
   }
 
   async register(registerUserDto: RegisterUserDto): Promise<User> {
+    const userExists = await this.checkIfUserExists(registerUserDto.email);
+
+    if (userExists) {
+      throw new ConflictException('User already exists');
+    }
+
     const salt = 10;
 
     const user = await this.prisma.user.create({
