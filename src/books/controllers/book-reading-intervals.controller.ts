@@ -10,6 +10,7 @@ import { Roles } from "src/auth/decorators/roles.decorator";
 import { ReadingIntervalResponseDto } from "../dto/responses/reading-interval-response.dto";
 import { CreateReadingIntervalsSwagger } from "../decorators/swagger/reading-intervals.swagger";
 import { LoggerService } from "src/logger/logger.service";
+import { Book } from "@prisma/client";
 
 @ApiTags('Books')
 @Controller('books')
@@ -35,10 +36,16 @@ export class BookReadingIntervalsController {
       throw new BadRequestException("All intervals must be for the same book");
     }
 
-    const bookShouldBeExisted = await this.readingIntervalService.bookShouldBeExisted(createBookIntervalsDto);
+    const book : Book | null = await this.readingIntervalService.findBookFromIntervals(createBookIntervalsDto);
 
-    if (!bookShouldBeExisted) {
+    if (!book) {
       throw new BadRequestException("Book not found");
+    }
+
+    const intervalsEndPageShouldBeSmallerThanBookPages = this.readingIntervalService.intervalsEndPageShouldBeSmallerThanBookPages(book,createBookIntervalsDto);
+
+    if (!intervalsEndPageShouldBeSmallerThanBookPages) {
+      throw new BadRequestException("Intervals end pages should be smaller than book pages");
     }
   
     try {
