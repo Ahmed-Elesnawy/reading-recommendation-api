@@ -9,7 +9,7 @@ export class CreateBookService {
 
   async createBook(book: CreateBookDto): Promise<Book> {
     try {
-      return this.prisma.book.create({ data: book });
+      return await this.prisma.book.create({ data: book });
     } catch (error) {
       throw new BadRequestException('Error creating book');
     }
