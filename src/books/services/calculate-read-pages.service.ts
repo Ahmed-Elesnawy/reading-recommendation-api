@@ -5,7 +5,7 @@ import { PrismaService } from "src/prisma/prisma.service";
 export class CalculateReadPagesService {
     private readonly logger = new Logger(CalculateReadPagesService.name);
 
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(private readonly prisma: PrismaService) { }
 
     async calculate(bookId: number): Promise<void> {
         try {
@@ -15,8 +15,8 @@ export class CalculateReadPagesService {
                 return;
             }
 
-            const mergedIntervals : { startPage: number; endPage: number }[] = this.mergeOverlappingIntervals(intervals);
-            const totalPagesRead : number = this.calculateTotalUniquePages(mergedIntervals);
+            const mergedIntervals: { startPage: number; endPage: number }[] = this.mergeOverlappingIntervals(intervals);
+            const totalPagesRead: number = this.calculateTotalUniquePages(mergedIntervals);
 
             await this.updateBookReadPages(bookId, totalPagesRead);
 
@@ -25,7 +25,7 @@ export class CalculateReadPagesService {
         }
     }
 
-    private async getReadingIntervals(bookId: number) : Promise<{ startPage: number; endPage: number }[]> {
+    private async getReadingIntervals(bookId: number): Promise<{ startPage: number; endPage: number }[]> {
         const intervals = await this.prisma.readingInterval.findMany({
             where: { bookId },
             select: {
@@ -38,13 +38,13 @@ export class CalculateReadPagesService {
         return intervals;
     }
 
-    private mergeOverlappingIntervals(intervals: { startPage: number; endPage: number }[]) : { startPage: number; endPage: number }[] {
+    private mergeOverlappingIntervals(intervals: { startPage: number; endPage: number }[]): { startPage: number; endPage: number }[] {
         const mergedIntervals: { startPage: number; endPage: number }[] = [];
         let currentInterval = { ...intervals[0] };
 
         for (let i = 1; i < intervals.length; i++) {
             const interval = intervals[i];
-            
+
             if (interval.startPage <= currentInterval.endPage + 1) {
                 // Merge overlapping or adjacent intervals
                 currentInterval.endPage = Math.max(currentInterval.endPage, interval.endPage);
@@ -59,20 +59,20 @@ export class CalculateReadPagesService {
         return mergedIntervals;
     }
 
-    private calculateTotalUniquePages(intervals: { startPage: number; endPage: number }[]) : number {
+    private calculateTotalUniquePages(intervals: { startPage: number; endPage: number }[]): number {
         return intervals.reduce((sum, interval) => {
             return sum + (interval.endPage - interval.startPage + 1);
         }, 0);
     }
 
-    private async updateBookReadPages(bookId: number, totalPagesRead: number) {
+    private async updateBookReadPages(bookId: number, totalPagesRead: number): Promise<void> {
         await this.prisma.book.update({
             where: { id: bookId },
             data: { numberOfReadPages: totalPagesRead }
         });
     }
 
-    private handleError(error: Error, bookId: number) {
+    private handleError(error: Error, bookId: number): void {
         this.logger.error(
             `Error calculating read pages for book ${bookId}: ${error.message}`,
             error.stack
