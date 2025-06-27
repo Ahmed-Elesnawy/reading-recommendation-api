@@ -38,13 +38,6 @@ export class AuthController {
     @Body() registerUserDto: RegisterUserDto,
   ): Promise<RegisterResponseDto> {
     try {
-      const userExists = await this.authService.checkIfUserExists(
-        registerUserDto.email,
-      );
-
-      if (userExists) {
-        throw new ConflictException('User already exists');
-      }
 
       const user = await this.authService.register(registerUserDto);
 
@@ -71,7 +64,7 @@ export class AuthController {
         'Error registering user',
         error instanceof Error ? error.message : 'Unknown error',
       );
-      throw new InternalServerErrorException('Internal server error occurred');
+      throw new InternalServerErrorException('Error registering user');
     }
   }
 
@@ -110,7 +103,7 @@ export class AuthController {
         'Error during login',
         error instanceof Error ? error.message : 'Unknown error',
       );
-      throw new InternalServerErrorException('Internal server error occurred');
+      throw new InternalServerErrorException('Error during login');
     }
   }
 }

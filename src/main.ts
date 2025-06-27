@@ -3,12 +3,16 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import * as csurf from 'csurf';
-import * as cookieParser from 'cookie-parser';
+import { GlobalExceptionFilter } from './common/filters';
+import { LoggerService } from './logger/logger.service';
 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Get logger service and set up global exception filter
+  const loggerService = await app.resolve(LoggerService);
+  app.useGlobalFilters(new GlobalExceptionFilter(loggerService));
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -32,11 +36,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
 
   SwaggerModule.setup('api-docs', app, document);
-
-
-  // No need with jwt auth
-  // app.use(cookieParser())
-  // app.use(csurf({ cookie: true }));
 
   app.enableCors({
     origin: '*', // TODO: change to the frontend url
