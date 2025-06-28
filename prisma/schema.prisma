@@ -23,7 +23,6 @@ model User {
   type UserType         @default(USER)
   intervals  ReadingInterval[]
 
-  @@index([email])
   @@map("users")
 }
 
