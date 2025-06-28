@@ -18,6 +18,7 @@ export class CalculateReadPagesConsumer extends WorkerHost {
       await this.calculateReadPagesService.calculate(job.data.bookId);
     } catch (error) {
       this.logger.error(CalculateReadPagesConsumer.name, error, error.message);
+      throw error;
     }
   }
 }
