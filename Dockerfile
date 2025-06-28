@@ -26,4 +26,4 @@ RUN pnpm run build
 EXPOSE 3000
 
 # Start the application with prisma migrate
-CMD pnpm prisma migrate deploy && pnpm run start:dev 
+CMD pnpm prisma migrate deploy && pnpm run test && pnpm run start:prod 
