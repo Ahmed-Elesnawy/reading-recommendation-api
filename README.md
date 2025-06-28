@@ -1,73 +1,84 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Reading Recommendation API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A NestJS-based REST API for tracking reading progress and providing book recommendations. Users can log their reading intervals for books and get insights on their reading habits.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- 📚 **Book Management**: Create and manage books with page tracking
+- 📖 **Reading Intervals**: Track reading progress with start/end pages
+- 👥 **User Authentication**: JWT-based authentication with role-based access
+- 📊 **Top Books**: Get recommendations based on most-read books
+- 🚀 **Queue Processing**: Background processing for calculating read pages
+- 🔒 **Security**: Rate limiting, CORS, and input validation
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Installation
+- **Framework**: NestJS (Node.js)
+- **Database**: PostgreSQL with Prisma ORM
+- **Cache/Queue**: Redis with BullMQ
+- **Authentication**: JWT with Passport
+- **Documentation**: Swagger/OpenAPI - localhost:3000/api-docs
+- **Package Manager**: pnpm
 
-```bash
-$ pnpm install
-```
+## Prerequisites
 
-## Running the app
+Make sure you have the following installed on your system:
+
+- [Docker](https://docs.docker.com/get-docker/) (version 20.0 or later)
+- [Docker Compose](https://docs.docker.com/compose/install/) (version 2.0 or later)
+- [Git](https://git-scm.com/downloads)
+
+## Quick Start with Docker Compose
+
+### 1. Clone the Repository
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+git clone git@github.com:Ahmed-Elesnawy/reading-recommendation-api.git
+cd reading-recommendation-api
 ```
 
-## Test
+### 2. Environment Setup
+
+Create a copy of the environment example file:
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+cp .env.example .env
 ```
 
-## Support
+The application uses environment variables that are already configured in the `docker-compose.yml` file. For Docker Compose setup, no additional configuration is needed.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 3. Run the Application
 
-## Stay in touch
+```bash
+# Build and start all services
+docker-compose up --build
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Or run in detached mode (background)
+docker-compose up --build -d
+```
 
-## License
+## Possible Improvements
 
-Nest is [MIT licensed](LICENSE).
+### Architecture and Design
+- **Repository Pattern**: Currently not implemented as it would be an overhead for this task's scope. Could be added if the application grows more complex.
+- **Job Processing**: Consider separating the job processing into a dedicated service for better scalability and maintainability.
+- **Read Pages Calculation**: 
+  - Two methods are implemented for calculating read pages
+  - The optimized version works fine but could benefit from additional test coverage
+  - Current implementation is stable and efficient
+
+### Monitoring and Observability
+- **Metrics and Logging**:
+  - Implement Grafana for visualization
+  - Add Prometheus for metrics collection
+  - Set up proper monitoring dashboards
+  - Enhanced logging with structured formats
+
+### Scaling and High Availability
+- **Infrastructure Options**:
+  - Consider Kubernetes for container orchestration
+  - Evaluate managed services:
+    - Amazon RDS or Azure Database for PostgreSQL
+    - Amazon ElastiCache or Azure Cache for Redis
+  - Implement proper load balancing
+  - Set up auto-scaling policies
