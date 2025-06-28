@@ -11,13 +11,13 @@ export class CreateBookIntervalsDto {
       {
         startPage: 1,
         endPage: 25,
-        bookId: 1
+        bookId: 1,
       },
       {
         startPage: 30,
         endPage: 45,
-        bookId: 1
-      },      
+        bookId: 1,
+      },
     ],
     isArray: true,
   })

@@ -7,4 +7,4 @@ import { LoggerModule } from '../logger/logger.module';
   providers: [GlobalExceptionFilter],
   exports: [GlobalExceptionFilter],
 })
-export class CommonModule {} 
+export class CommonModule {}

@@ -35,7 +35,9 @@ describe('CalculateReadPagesService', () => {
   describe('calculate', () => {
     it('should handle empty intervals and return early', async () => {
       const bookId = 1;
-      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue([]);
+      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(
+        [],
+      );
 
       await service.calculate(bookId);
 
@@ -53,8 +55,10 @@ describe('CalculateReadPagesService', () => {
     it('should calculate pages for single interval', async () => {
       const bookId = 1;
       const intervals = [{ startPage: 1, endPage: 10 }];
-      
-      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(intervals);
+
+      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(
+        intervals,
+      );
       (prismaService.book.update as jest.Mock).mockResolvedValue({});
 
       await service.calculate(bookId);
@@ -72,8 +76,10 @@ describe('CalculateReadPagesService', () => {
         { startPage: 10, endPage: 15 },
         { startPage: 20, endPage: 25 },
       ];
-      
-      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(intervals);
+
+      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(
+        intervals,
+      );
       (prismaService.book.update as jest.Mock).mockResolvedValue({});
 
       await service.calculate(bookId);
@@ -92,8 +98,10 @@ describe('CalculateReadPagesService', () => {
         { startPage: 5, endPage: 15 },
         { startPage: 12, endPage: 20 },
       ];
-      
-      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(intervals);
+
+      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(
+        intervals,
+      );
       (prismaService.book.update as jest.Mock).mockResolvedValue({});
 
       await service.calculate(bookId);
@@ -112,8 +120,10 @@ describe('CalculateReadPagesService', () => {
         { startPage: 6, endPage: 10 },
         { startPage: 11, endPage: 15 },
       ];
-      
-      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(intervals);
+
+      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(
+        intervals,
+      );
       (prismaService.book.update as jest.Mock).mockResolvedValue({});
 
       await service.calculate(bookId);
@@ -134,8 +144,10 @@ describe('CalculateReadPagesService', () => {
         { startPage: 20, endPage: 25 }, // Separate interval
         { startPage: 23, endPage: 30 }, // Overlaps with fourth
       ];
-      
-      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(intervals);
+
+      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(
+        intervals,
+      );
       (prismaService.book.update as jest.Mock).mockResolvedValue({});
 
       await service.calculate(bookId);
@@ -150,8 +162,10 @@ describe('CalculateReadPagesService', () => {
     it('should handle error during calculation and re-throw it', async () => {
       const bookId = 1;
       const error = new Error('Database error');
-      
-      (prismaService.readingInterval.findMany as jest.Mock).mockRejectedValue(error);
+
+      (prismaService.readingInterval.findMany as jest.Mock).mockRejectedValue(
+        error,
+      );
 
       await expect(service.calculate(bookId)).rejects.toThrow('Database error');
     });
@@ -165,8 +179,10 @@ describe('CalculateReadPagesService', () => {
         { startPage: 1, endPage: 5 },
         { startPage: 5, endPage: 8 },
       ];
-      
-      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(unsortedIntervals);
+
+      (prismaService.readingInterval.findMany as jest.Mock).mockResolvedValue(
+        unsortedIntervals,
+      );
       (prismaService.book.update as jest.Mock).mockResolvedValue({});
 
       await service.calculate(bookId);
@@ -181,4 +197,4 @@ describe('CalculateReadPagesService', () => {
       });
     });
   });
-}); 
+});

@@ -48,7 +48,9 @@ describe('ReadingIntervalService', () => {
 
     service = module.get<ReadingIntervalService>(ReadingIntervalService);
     prismaService = module.get<PrismaService>(PrismaService);
-    queue = module.get<Queue>(getQueueToken(BOOKS_CALCULATE_READING_INTERVAL_QUEUE));
+    queue = module.get<Queue>(
+      getQueueToken(BOOKS_CALCULATE_READING_INTERVAL_QUEUE),
+    );
   });
 
   it('should be defined', () => {
@@ -66,7 +68,9 @@ describe('ReadingIntervalService', () => {
     it('should create reading intervals successfully', async () => {
       const userId = 1;
       (prismaService.book.findUnique as jest.Mock).mockResolvedValue(mockBook);
-      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue({ count: 2 });
+      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue(
+        { count: 2 },
+      );
       (queue.add as jest.Mock).mockResolvedValue({});
 
       await service.createReadingInterval(userId, validDto);
@@ -81,14 +85,16 @@ describe('ReadingIntervalService', () => {
 
       expect(queue.add).toHaveBeenCalledWith(
         BOOKS_CALCULATE_READING_INTERVAL_QUEUE,
-        { bookId: 1 }
+        { bookId: 1 },
       );
     });
 
     it('should not trigger queue when no intervals are created', async () => {
       const userId = 1;
       (prismaService.book.findUnique as jest.Mock).mockResolvedValue(mockBook);
-      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue({ count: 0 });
+      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue(
+        { count: 0 },
+      );
 
       await service.createReadingInterval(userId, validDto);
 
@@ -104,24 +110,24 @@ describe('ReadingIntervalService', () => {
         ],
       };
 
-      await expect(service.createReadingInterval(userId, invalidDto)).rejects.toThrow(
-        BadRequestException
-      );
-      await expect(service.createReadingInterval(userId, invalidDto)).rejects.toThrow(
-        'All intervals must be for the same book'
-      );
+      await expect(
+        service.createReadingInterval(userId, invalidDto),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.createReadingInterval(userId, invalidDto),
+      ).rejects.toThrow('All intervals must be for the same book');
     });
 
     it('should throw BadRequestException when book does not exist', async () => {
       const userId = 1;
       (prismaService.book.findUnique as jest.Mock).mockResolvedValue(null);
 
-      await expect(service.createReadingInterval(userId, validDto)).rejects.toThrow(
-        BadRequestException
-      );
-      await expect(service.createReadingInterval(userId, validDto)).rejects.toThrow(
-        'Book not found'
-      );
+      await expect(
+        service.createReadingInterval(userId, validDto),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.createReadingInterval(userId, validDto),
+      ).rejects.toThrow('Book not found');
     });
 
     it('should throw BadRequestException when end page exceeds book pages', async () => {
@@ -134,11 +140,13 @@ describe('ReadingIntervalService', () => {
 
       (prismaService.book.findUnique as jest.Mock).mockResolvedValue(mockBook);
 
-      await expect(service.createReadingInterval(userId, invalidDto)).rejects.toThrow(
-        BadRequestException
-      );
-      await expect(service.createReadingInterval(userId, invalidDto)).rejects.toThrow(
-        'Intervals end pages should be smaller than book pages'
+      await expect(
+        service.createReadingInterval(userId, invalidDto),
+      ).rejects.toThrow(BadRequestException);
+      await expect(
+        service.createReadingInterval(userId, invalidDto),
+      ).rejects.toThrow(
+        'Intervals end pages should be smaller than book pages',
       );
     });
 
@@ -149,7 +157,9 @@ describe('ReadingIntervalService', () => {
       };
 
       (prismaService.book.findUnique as jest.Mock).mockResolvedValue(mockBook);
-      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue({ count: 1 });
+      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue(
+        { count: 1 },
+      );
       (queue.add as jest.Mock).mockResolvedValue({});
 
       await service.createReadingInterval(userId, singleIntervalDto);
@@ -167,7 +177,9 @@ describe('ReadingIntervalService', () => {
       };
 
       (prismaService.book.findUnique as jest.Mock).mockResolvedValue(mockBook);
-      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue({ count: 1 });
+      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue(
+        { count: 1 },
+      );
       (queue.add as jest.Mock).mockResolvedValue({});
 
       await service.createReadingInterval(userId, exactDto);
@@ -185,7 +197,9 @@ describe('ReadingIntervalService', () => {
       };
 
       // This should trigger validation errors before reaching the database
-      await expect(service.createReadingInterval(userId, emptyDto)).rejects.toThrow();
+      await expect(
+        service.createReadingInterval(userId, emptyDto),
+      ).rejects.toThrow();
     });
 
     it('should handle multiple intervals for same book pages', async () => {
@@ -199,7 +213,9 @@ describe('ReadingIntervalService', () => {
       };
 
       (prismaService.book.findUnique as jest.Mock).mockResolvedValue(mockBook);
-      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue({ count: 3 });
+      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue(
+        { count: 3 },
+      );
       (queue.add as jest.Mock).mockResolvedValue({});
 
       await service.createReadingInterval(userId, multipleDto);
@@ -220,9 +236,9 @@ describe('ReadingIntervalService', () => {
 
       (prismaService.book.findUnique as jest.Mock).mockRejectedValue(dbError);
 
-      await expect(service.createReadingInterval(userId, validDto)).rejects.toThrow(
-        'Database connection failed'
-      );
+      await expect(
+        service.createReadingInterval(userId, validDto),
+      ).rejects.toThrow('Database connection failed');
     });
 
     it('should handle queue errors gracefully', async () => {
@@ -230,12 +246,14 @@ describe('ReadingIntervalService', () => {
       const queueError = new Error('Queue connection failed');
 
       (prismaService.book.findUnique as jest.Mock).mockResolvedValue(mockBook);
-      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue({ count: 2 });
+      (prismaService.readingInterval.createMany as jest.Mock).mockResolvedValue(
+        { count: 2 },
+      );
       (queue.add as jest.Mock).mockRejectedValue(queueError);
 
-      await expect(service.createReadingInterval(userId, validDto)).rejects.toThrow(
-        'Queue connection failed'
-      );
+      await expect(
+        service.createReadingInterval(userId, validDto),
+      ).rejects.toThrow('Queue connection failed');
     });
   });
 
@@ -273,7 +291,9 @@ describe('ReadingIntervalService', () => {
         ],
       };
 
-      expect(service['intervalsEndPageShouldBeSmallerThanBookPages'](mockBook, dto)).toBe(true);
+      expect(
+        service['intervalsEndPageShouldBeSmallerThanBookPages'](mockBook, dto),
+      ).toBe(true);
 
       const invalidDto: CreateBookIntervalsDto = {
         intervals: [
@@ -282,7 +302,12 @@ describe('ReadingIntervalService', () => {
         ],
       };
 
-      expect(service['intervalsEndPageShouldBeSmallerThanBookPages'](mockBook, invalidDto)).toBe(false);
+      expect(
+        service['intervalsEndPageShouldBeSmallerThanBookPages'](
+          mockBook,
+          invalidDto,
+        ),
+      ).toBe(false);
     });
   });
-}); 
+});

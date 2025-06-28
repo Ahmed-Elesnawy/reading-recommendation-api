@@ -8,18 +8,18 @@ export class CalculateReadPagesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async calculate(bookId: number): Promise<void> {
-      const intervals = await this.getReadingIntervals(bookId);
+    const intervals = await this.getReadingIntervals(bookId);
 
-      if (!intervals.length) {
-        return;
-      }
+    if (!intervals.length) {
+      return;
+    }
 
-      const mergedIntervals: { startPage: number; endPage: number }[] =
-        this.mergeOverlappingIntervals(intervals);
-      const totalPagesRead: number =
-        this.calculateTotalUniquePages(mergedIntervals);
+    const mergedIntervals: { startPage: number; endPage: number }[] =
+      this.mergeOverlappingIntervals(intervals);
+    const totalPagesRead: number =
+      this.calculateTotalUniquePages(mergedIntervals);
 
-      await this.updateBookReadPages(bookId, totalPagesRead);
+    await this.updateBookReadPages(bookId, totalPagesRead);
   }
 
   /**
@@ -28,11 +28,11 @@ export class CalculateReadPagesService {
    */
   async calculateUsingPatchProcessing(bookId: number): Promise<void> {
     let offset = 0;
-    let allIntervals: { startPage: number; endPage: number }[] = [];
+    const allIntervals: { startPage: number; endPage: number }[] = [];
 
     while (true) {
       const batch = await this.getReadingIntervalsBatch(bookId, offset);
-      
+
       if (batch.length === 0) {
         break;
       }

@@ -11,7 +11,7 @@ export class TopBooksResponseDto {
         book_id: 1,
         book_title: 'The Great Gatsby',
         num_of_pages: 180,
-        num_of_read_pages: 50
+        num_of_read_pages: 50,
       },
     ],
   })

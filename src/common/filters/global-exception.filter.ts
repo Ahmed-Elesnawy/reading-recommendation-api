@@ -66,7 +66,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       const response = exception.getResponse();
       return {
         status: exception.getStatus(),
-        message: typeof response === 'string' ? response : (response as any).message || 'An error occurred',
+        message:
+          typeof response === 'string'
+            ? response
+            : (response as any).message || 'An error occurred',
         details: typeof response === 'object' ? response : undefined,
       };
     }
@@ -106,10 +109,12 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     if (exception instanceof Error) {
       return {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: process.env.NODE_ENV === 'production' 
-          ? 'Internal server error' 
-          : exception.message,
-        details: process.env.NODE_ENV === 'development' ? exception.stack : undefined,
+        message:
+          process.env.NODE_ENV === 'production'
+            ? 'Internal server error'
+            : exception.message,
+        details:
+          process.env.NODE_ENV === 'development' ? exception.stack : undefined,
       };
     }
 
@@ -117,7 +122,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     return {
       status: HttpStatus.INTERNAL_SERVER_ERROR,
       message: 'An unexpected error occurred',
-      details: process.env.NODE_ENV === 'development' ? String(exception) : undefined,
+      details:
+        process.env.NODE_ENV === 'development' ? String(exception) : undefined,
     };
   }
 
@@ -155,7 +161,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         return {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           message: 'Database error occurred',
-          details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+          details:
+            process.env.NODE_ENV === 'development' ? error.message : undefined,
         };
     }
   }

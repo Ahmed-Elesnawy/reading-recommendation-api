@@ -60,7 +60,9 @@ describe('TopBooksService', () => {
   describe('getTopBooks', () => {
     it('should return top books ordered by numberOfReadPages descending with default limit', async () => {
       const expectedBooks = mockBooks.slice(0, 5);
-      jest.spyOn(prismaService.book, 'findMany').mockResolvedValue(expectedBooks);
+      jest
+        .spyOn(prismaService.book, 'findMany')
+        .mockResolvedValue(expectedBooks);
 
       const result = await service.getTopBooks();
 
@@ -76,7 +78,9 @@ describe('TopBooksService', () => {
     it('should return top books with custom limit', async () => {
       const limit = 2;
       const expectedBooks = mockBooks.slice(0, limit);
-      jest.spyOn(prismaService.book, 'findMany').mockResolvedValue(expectedBooks);
+      jest
+        .spyOn(prismaService.book, 'findMany')
+        .mockResolvedValue(expectedBooks);
 
       const result = await service.getTopBooks(limit);
 
@@ -130,7 +134,9 @@ describe('TopBooksService', () => {
       const error = new Error('Database connection failed');
       jest.spyOn(prismaService.book, 'findMany').mockRejectedValue(error);
 
-      await expect(service.getTopBooks()).rejects.toThrow('Database connection failed');
+      await expect(service.getTopBooks()).rejects.toThrow(
+        'Database connection failed',
+      );
     });
   });
-}); 
+});

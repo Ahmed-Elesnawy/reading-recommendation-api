@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException } from '@nestjs/common';
 import { CreateBookService } from '../create-book.service';
-import { PrismaService } from 'src/prisma/prisma.service';  
+import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateBookDto } from '../../dto';
 import { Book } from '@prisma/client';
 
@@ -48,7 +48,9 @@ describe('CreateBookService', () => {
 
   describe('createBook', () => {
     it('should successfully create a book', async () => {
-      jest.spyOn(prismaService.book, 'create').mockResolvedValue(mockCreatedBook);
+      jest
+        .spyOn(prismaService.book, 'create')
+        .mockResolvedValue(mockCreatedBook);
 
       const result = await service.createBook(mockCreateBookDto);
 
@@ -63,28 +65,32 @@ describe('CreateBookService', () => {
       jest.spyOn(prismaService.book, 'create').mockRejectedValue(prismaError);
 
       await expect(service.createBook(mockCreateBookDto)).rejects.toThrow(
-        BadRequestException
+        BadRequestException,
       );
       await expect(service.createBook(mockCreateBookDto)).rejects.toThrow(
-        'Error creating book'
+        'Error creating book',
       );
     });
 
     it('should handle prisma unique constraint errors', async () => {
       const uniqueConstraintError = new Error('Unique constraint failed');
-      jest.spyOn(prismaService.book, 'create').mockRejectedValue(uniqueConstraintError);
+      jest
+        .spyOn(prismaService.book, 'create')
+        .mockRejectedValue(uniqueConstraintError);
 
       await expect(service.createBook(mockCreateBookDto)).rejects.toThrow(
-        BadRequestException
+        BadRequestException,
       );
     });
 
     it('should handle prisma foreign key constraint errors', async () => {
       const foreignKeyError = new Error('Foreign key constraint failed');
-      jest.spyOn(prismaService.book, 'create').mockRejectedValue(foreignKeyError);
+      jest
+        .spyOn(prismaService.book, 'create')
+        .mockRejectedValue(foreignKeyError);
 
       await expect(service.createBook(mockCreateBookDto)).rejects.toThrow(
-        BadRequestException
+        BadRequestException,
       );
     });
 
@@ -93,7 +99,7 @@ describe('CreateBookService', () => {
       jest.spyOn(prismaService.book, 'create').mockRejectedValue(nullError);
 
       await expect(service.createBook(null as any)).rejects.toThrow(
-        BadRequestException
+        BadRequestException,
       );
     });
 
@@ -109,7 +115,9 @@ describe('CreateBookService', () => {
         numberOfPages: 1,
       };
 
-      jest.spyOn(prismaService.book, 'create').mockResolvedValue(minimalCreatedBook);
+      jest
+        .spyOn(prismaService.book, 'create')
+        .mockResolvedValue(minimalCreatedBook);
 
       const result = await service.createBook(minimalBook);
 
@@ -131,11 +139,13 @@ describe('CreateBookService', () => {
         numberOfPages: 10000,
       };
 
-      jest.spyOn(prismaService.book, 'create').mockResolvedValue(largeCreatedBook);
+      jest
+        .spyOn(prismaService.book, 'create')
+        .mockResolvedValue(largeCreatedBook);
 
       const result = await service.createBook(largeBook);
 
       expect(result.numberOfPages).toBe(10000);
     });
   });
-}); 
+});

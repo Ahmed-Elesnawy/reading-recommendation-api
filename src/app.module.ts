@@ -32,7 +32,9 @@ import { APP_GUARD } from '@nestjs/core';
     }),
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService): Promise<ThrottlerModuleOptions> => ({
+      useFactory: async (
+        configService: ConfigService,
+      ): Promise<ThrottlerModuleOptions> => ({
         throttlers: [
           {
             ttl: configService.get('THROTTLE_TTL'),
@@ -44,9 +46,12 @@ import { APP_GUARD } from '@nestjs/core';
     }),
   ],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_GUARD,
-    useClass: ThrottlerGuard,
-  }],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}

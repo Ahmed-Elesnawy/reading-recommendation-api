@@ -6,7 +6,6 @@ import { ConfigService } from '@nestjs/config';
 import { GlobalExceptionFilter } from './common/filters';
 import { LoggerService } from './logger/logger.service';
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 

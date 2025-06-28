@@ -38,7 +38,6 @@ export class AuthController {
     @Body() registerUserDto: RegisterUserDto,
   ): Promise<RegisterResponseDto> {
     try {
-
       const user = await this.authService.register(registerUserDto);
 
       return {
