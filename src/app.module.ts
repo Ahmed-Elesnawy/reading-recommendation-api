@@ -7,7 +7,7 @@ import { LoggerModule } from './logger/logger.module';
 import { AuthModule } from './auth/auth.module';
 import { BullModule } from '@nestjs/bullmq';
 import { BooksModule } from './books/books.module';
-import { ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule, ThrottlerModuleOptions } from '@nestjs/throttler';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 
@@ -30,12 +30,18 @@ import { APP_GUARD } from '@nestjs/core';
       }),
       inject: [ConfigService],
     }),
-    ThrottlerModule.forRoot([
-      {
-        ttl: 15 * 60 * 1000, // 15 minutes
-        limit: 100, // limit each IP to 100 requests per windowMs
-      },
-    ]),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService): Promise<ThrottlerModuleOptions> => ({
+        throttlers: [
+          {
+            ttl: configService.get('THROTTLE_TTL'),
+            limit: configService.get('THROTTLE_LIMIT'),
+          },
+        ],
+      }),
+      inject: [ConfigService],
+    }),
   ],
   controllers: [AppController],
   providers: [AppService, {
