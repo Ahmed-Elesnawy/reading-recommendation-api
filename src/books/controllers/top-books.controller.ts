@@ -16,7 +16,7 @@ import { plainToInstance } from 'class-transformer';
 import { BookTransformer } from '../transformers/book.transformer';
 import { TopBooksSwagger } from '../decorators/swagger/top-books.swagger';
 
-@Controller('books')
+@Controller('api/v1/books')
 export class TopBooksController {
   constructor(
     private readonly topBooksService: TopBooksService,

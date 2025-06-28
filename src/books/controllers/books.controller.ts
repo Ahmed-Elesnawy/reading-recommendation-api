@@ -21,14 +21,14 @@ import { CreateBookSwagger } from '../decorators/swagger/create-book.swagger';
 import { CreateBookResponseDto } from '../dto/responses/create-book-response.dto';
 
 @ApiTags('Books')
-@Controller('books')
+@Controller('api/v1/books')
 export class BooksController {
   constructor(
     private readonly createBookService: CreateBookService,
     private readonly logger: LoggerService,
   ) {}
 
-  @Post()
+  @Post('create')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(UserType.ADMIN)
   @HttpCode(HttpStatus.CREATED)

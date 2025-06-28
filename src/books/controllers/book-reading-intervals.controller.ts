@@ -20,7 +20,7 @@ import { CreateReadingIntervalsSwagger } from '../decorators/swagger/reading-int
 import { LoggerService } from 'src/logger/logger.service';
 
 @ApiTags('Books')
-@Controller('books')
+@Controller('api/v1/books')
 export class BookReadingIntervalsController {
   constructor(
     private readonly readingIntervalService: ReadingIntervalService,
