@@ -15,6 +15,7 @@ export class CalculateReadPagesConsumer extends WorkerHost {
 
   async process(job: Job<{ bookId: number }>) {
     try {
+      // we can use calculateUsingPatchProcessing instead of calculate but this works fine for now
       await this.calculateReadPagesService.calculate(job.data.bookId);
     } catch (error) {
       this.logger.error(CalculateReadPagesConsumer.name, error, error.message);
